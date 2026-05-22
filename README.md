@@ -1,6 +1,6 @@
 # Doc Intel
 
-A local RAG (Retrieval-Augmented Generation) application that lets you upload documents, index them, and ask questions — with exact page citations. Runs entirely on your machine with no external API calls.
+A local RAG (Retrieval-Augmented Generation) application that lets you upload documents, index them, and ask questions - with exact page citations. Runs entirely on your machine with no external API calls.
 
 **Stack:** FastAPI · Ollama · Qdrant · Tesseract OCR
 

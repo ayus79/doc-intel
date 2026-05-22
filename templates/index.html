@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doc Intel</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080b12;
+      --surface: #0e1320;
+      --surface2: #141925;
+      --border: #1c2333;
+      --border2: #252e42;
+      --accent: #6366f1;
+      --accent-hover: #5254cc;
+      --accent-dim: rgba(99,102,241,0.12);
+      --text: #e2e8f0;
+      --text-2: #8892a4;
+      --text-3: #4a5568;
+      --success: #10b981;
+      --danger: #ef4444;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.75rem;
+      height: 56px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+      backdrop-filter: blur(12px);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .logo-icon {
+      width: 28px; height: 28px;
+      background: var(--accent);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .logo h1 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+    .logo span { color: var(--text-2); font-weight: 400; }
+    .header-badge {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-2);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.65rem;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Layout ── */
+    .layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 280px;
+      min-width: 280px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .sidebar-section {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-section:last-child { border-bottom: none; flex: 1; overflow-y: auto; }
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+      margin-bottom: 0.85rem;
+    }
+
+    /* Upload zone */
+    .upload-zone {
+      border: 1.5px dashed var(--border2);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--surface2);
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .upload-zone input { display: none; }
+    .upload-icon {
+      width: 36px; height: 36px;
+      background: var(--border);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 0.6rem;
+      font-size: 16px;
+      transition: background 0.2s;
+    }
+    .upload-zone:hover .upload-icon { background: var(--accent-dim); }
+    .upload-zone p { font-size: 0.78rem; color: var(--text-2); line-height: 1.5; }
+    .upload-zone .formats { font-size: 0.68rem; color: var(--text-3); margin-top: 0.3rem; }
+    #file-name {
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-top: 0.5rem;
+      word-break: break-all;
+      font-weight: 500;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+      letter-spacing: 0.01em;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      margin-top: 0.65rem;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-2);
+      border: 1px solid var(--border2);
+      margin-top: 0.5rem;
+    }
+    .btn-ghost:hover:not(:disabled) { background: var(--surface2); color: var(--text); }
+
+    /* Doc list */
+    .doc-list { display: flex; flex-direction: column; gap: 0.35rem; }
+    .doc-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0.65rem;
+      border-radius: var(--radius-sm);
+      background: var(--surface2);
+      border: 1px solid transparent;
+      transition: border-color 0.15s;
+    }
+    .doc-item:hover { border-color: var(--border2); }
+    .doc-icon {
+      width: 26px; height: 26px;
+      background: var(--accent-dim);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .doc-name {
+      flex: 1;
+      font-size: 0.75rem;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .doc-del {
+      background: none;
+      border: none;
+      color: var(--text-3);
+      cursor: pointer;
+      font-size: 0.7rem;
+      padding: 0.2rem;
+      border-radius: 4px;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      opacity: 0;
+    }
+    .doc-item:hover .doc-del { opacity: 1; }
+    .doc-del:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
+    .empty-docs { font-size: 0.78rem; color: var(--text-3); text-align: center; padding: 1rem 0; }
+
+    /* ── Main ── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    /* Query bar */
+    .query-bar {
+      padding: 1.25rem 1.75rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .query-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 0 1rem;
+      transition: border-color 0.2s;
+    }
+    .query-wrap:focus-within { border-color: var(--accent); }
+    .query-wrap svg { color: var(--text-3); flex-shrink: 0; }
+    .query-wrap input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+      padding: 0.75rem 0;
+    }
+    .query-wrap input::placeholder { color: var(--text-3); }
+    .ask-btn {
+      padding: 0.7rem 1.4rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: inherit;
+      white-space: nowrap;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .ask-btn:hover:not(:disabled) { background: var(--accent-hover); }
+    .ask-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Content area */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .content::-webkit-scrollbar { width: 4px; }
+    .content::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+    /* Empty state */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      color: var(--text-3);
+      padding: 3rem;
+      text-align: center;
+    }
+    .empty-state .empty-icon {
+      width: 56px; height: 56px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      margin-bottom: 0.5rem;
+    }
+    .empty-state h3 { font-size: 0.95rem; font-weight: 500; color: var(--text-2); }
+    .empty-state p { font-size: 0.8rem; max-width: 280px; line-height: 1.6; }
+
+    /* Answer card */
+    .answer-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: none;
+    }
+    .answer-card.visible { display: block; }
+    .answer-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .answer-header .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    .answer-header span { font-size: 0.75rem; font-weight: 500; color: var(--text-2); }
+    .answer-body { padding: 1.25rem; }
+    .answer-text {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    /* Sources */
+    .sources-section {
+      padding: 0.85rem 1.25rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface2);
+      display: none;
+    }
+    .sources-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+      margin-bottom: 0.6rem;
+    }
+    .source-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .source-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.72rem;
+      color: var(--text-2);
+      transition: border-color 0.15s;
+    }
+    .source-chip:hover { border-color: var(--accent); }
+    .source-chip .page { color: var(--accent); font-weight: 600; }
+    .source-chip .score { color: var(--text-3); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      padding: 0.7rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.2s cubic-bezier(.16,1,.3,1);
+      pointer-events: none;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 320px;
+      backdrop-filter: blur(12px);
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+    .toast.error { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,0.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.55s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Scrollbar */
+    .sidebar-section:last-child::-webkit-scrollbar { width: 3px; }
+    .sidebar-section:last-child::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+    /* ── Delete Modal ── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.18s ease;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      width: 340px;
+      display: flex; flex-direction: column; gap: 1rem;
+      transform: translateY(10px) scale(0.98);
+      transition: transform 0.18s ease;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+.modal h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+    .modal p { font-size: 0.82rem; color: var(--text-2); line-height: 1.6; }
+    .modal-filename {
+      font-weight: 600; color: var(--text);
+      word-break: break-all;
+    }
+    .modal-actions { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 0.25rem; }
+    .btn-cancel {
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border2);
+      background: transparent;
+      color: var(--text-2);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .btn-cancel:hover { background: var(--surface2); color: var(--text); }
+    .btn-danger {
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: var(--danger);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">📄</div>
+    <h1>Doc<span>Intel</span></h1>
+  </div>
+  <div class="header-badge">RAG · Ollama · Qdrant</div>
+</header>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="section-label">Upload Document</div>
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+        <div class="upload-icon">⬆</div>
+        <p>Click or drag & drop</p>
+        <div class="formats">PDF · DOCX · PPTX · XLSX · CSV · TXT · JPG · PNG · SVG</div>
+        <div id="file-name"></div>
+        <input type="file" id="file-input" accept=".pdf,.docx,.pptx,.xlsx,.csv,.txt,.md,.jpg,.jpeg,.png,.webp,.bmp,.tiff,.svg" />
+      </div>
+      <button class="btn btn-primary" id="upload-btn" disabled>Index Document</button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="section-label">Indexed Documents</div>
+      <div class="doc-list" id="doc-list">
+        <div class="empty-docs">No documents indexed yet.</div>
+      </div>
+      <button class="btn btn-ghost" onclick="loadDocs()">↺ Refresh</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="query-bar">
+      <div class="query-wrap">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="question" placeholder="Ask anything about your documents…" onkeydown="if(event.key==='Enter') ask()" />
+      </div>
+      <button class="ask-btn" id="ask-btn" onclick="ask()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7z"/>
+        </svg>
+        Ask
+      </button>
+    </div>
+
+    <div class="content" id="content">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>Ask your documents anything</h3>
+        <p>Upload a file, then ask questions and get answers with exact page citations.</p>
+      </div>
+
+      <div class="answer-card" id="answer-card">
+        <div class="answer-header">
+          <div class="dot"></div>
+          <span>Answer</span>
+        </div>
+        <div class="answer-body">
+          <div class="answer-text" id="answer-text"></div>
+        </div>
+        <div class="sources-section" id="sources-section">
+          <div class="sources-label">Sources</div>
+          <div class="source-chips" id="sources-list"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Delete confirmation modal -->
+<div class="modal-backdrop" id="del-modal">
+  <div class="modal">
+    <div>
+      <h3>Delete document?</h3>
+      <p>This will remove <span class="modal-filename" id="del-modal-name"></span> and all its indexed chunks. This cannot be undone.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="del-cancel">Cancel</button>
+      <button class="btn-danger" id="del-confirm">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = '/api';
+
+  function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = `toast ${type} show`;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 3200);
+  }
+
+  // File pick
+  const fileInput = document.getElementById('file-input');
+  const uploadZone = document.getElementById('upload-zone');
+
+  fileInput.addEventListener('change', () => {
+    const f = fileInput.files[0];
+    document.getElementById('file-name').textContent = f ? f.name : '';
+    document.getElementById('upload-btn').disabled = !f;
+  });
+
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) {
+      fileInput.files = e.dataTransfer.files;
+      document.getElementById('file-name').textContent = f.name;
+      document.getElementById('upload-btn').disabled = false;
+    }
+  });
+
+  // Upload
+  document.getElementById('upload-btn').addEventListener('click', async () => {
+    const f = fileInput.files[0];
+    if (!f) return;
+    const btn = document.getElementById('upload-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Indexing…';
+
+    const form = new FormData();
+    form.append('file', f);
+    try {
+      const res = await fetch(`${API}/upload`, { method: 'POST', body: form });
+      const data = await res.json();
+      if (!res.ok || !data.status) throw new Error(data.message || 'Upload failed');
+      toast(`✓ ${data.data.doc_name} - ${data.data.chunks_stored} chunks indexed`);
+      fileInput.value = '';
+      document.getElementById('file-name').textContent = '';
+      loadDocs();
+    } catch (e) {
+      toast(e.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Index Document';
+    }
+  });
+
+  // Docs list
+  async function loadDocs() {
+    try {
+      const res = await fetch(`${API}/documents`);
+      const data = await res.json();
+      renderDocs(data.data.documents);
+    } catch { toast('Could not load documents', 'error'); }
+  }
+
+  function renderDocs(docs) {
+    const el = document.getElementById('doc-list');
+    if (!docs || !docs.length) {
+      el.innerHTML = '<div class="empty-docs">No documents indexed yet.</div>';
+      return;
+    }
+    el.innerHTML = docs.map(d => `
+      <div class="doc-item">
+        <div class="doc-icon">📄</div>
+        <span class="doc-name" title="${d}">${d}</span>
+        <button class="doc-del" title="Delete" onclick="deleteDoc('${d}')">✕</button>
+      </div>`).join('');
+  }
+
+  let _pendingDelete = null;
+
+  function deleteDoc(name) {
+    _pendingDelete = name;
+    document.getElementById('del-modal-name').textContent = name;
+    document.getElementById('del-modal').classList.add('open');
+  }
+
+  function closeDelModal() {
+    _pendingDelete = null;
+    document.getElementById('del-modal').classList.remove('open');
+  }
+
+  document.getElementById('del-cancel').addEventListener('click', closeDelModal);
+  document.getElementById('del-modal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeDelModal();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDelModal();
+  });
+
+  document.getElementById('del-confirm').addEventListener('click', async () => {
+    if (!_pendingDelete) return;
+    const name = _pendingDelete;
+    const btn = document.getElementById('del-confirm');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Deleting…';
+    try {
+      await fetch(`${API}/documents/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      toast(`Deleted ${name}`);
+      loadDocs();
+    } catch {
+      toast('Delete failed', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg> Delete`;
+      closeDelModal();
+    }
+  });
+
+  // Query
+  async function ask() {
+    const q = document.getElementById('question').value.trim();
+    if (!q) return;
+    const btn = document.getElementById('ask-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Thinking…';
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('answer-card').className = 'answer-card';
+    document.getElementById('sources-section').style.display = 'none';
+
+    try {
+      const res = await fetch(`${API}/query`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.status) throw new Error(data.message || 'Query failed');
+
+      document.getElementById('answer-card').className = 'answer-card visible';
+      document.getElementById('answer-text').textContent = data.data.answer;
+
+      if (data.data.sources && data.data.sources.length) {
+        const seen = new Set();
+        const chips = data.data.sources
+          .filter(s => {
+            const key = `${s.doc_name}:${s.page_number}`;
+            if (seen.has(key)) return false;
+            seen.add(key); return true;
+          })
+          .map(s => `
+            <span class="source-chip">
+              📄 ${s.doc_name}
+              <span class="page">p.${s.page_number}</span>
+              <span class="score">${(s.score * 100).toFixed(0)}%</span>
+            </span>`).join('');
+        document.getElementById('sources-list').innerHTML = chips;
+        document.getElementById('sources-section').style.display = 'block';
+      }
+    } catch (e) {
+      toast(e.message, 'error');
+      document.getElementById('empty-state').style.display = 'flex';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7z"/></svg> Ask`;
+    }
+  }
+
+  loadDocs();
+</script>
+</body>
+</html>

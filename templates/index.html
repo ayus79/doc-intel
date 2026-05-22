@@ -223,6 +223,7 @@
     /* ── Main ── */
     .main {
       flex: 1;
+      min-width: 0;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -282,6 +283,7 @@
     /* Content area */
     .content {
       flex: 1;
+      min-height: 0;
       overflow-y: auto;
       padding: 1.75rem;
       display: flex;
@@ -345,6 +347,8 @@
       line-height: 1.8;
       color: var(--text);
       white-space: pre-wrap;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
 
     /* Sources */
@@ -719,7 +723,9 @@
       if (!res.ok || !data.status) throw new Error(data.message || 'Query failed');
 
       document.getElementById('answer-card').className = 'answer-card visible';
-      document.getElementById('answer-text').textContent = data.data.answer;
+      const answerTextEl = document.getElementById('answer-text');
+      answerTextEl.textContent = data.data.answer;
+      answerTextEl.scrollTop = 0;
 
       if (data.data.sources && data.data.sources.length) {
         const seen = new Set();

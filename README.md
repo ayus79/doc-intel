@@ -104,14 +104,3 @@ LLM_MODEL=llama3.1:8b
 EMBED_MODEL=nomic-embed-text
 TOP_K=8
 ```
-
----
-
-## Stopping
-
-```bash
-# Stop the server: Ctrl+C
-
-# Stop Qdrant
-docker compose down
-```

@@ -1,3 +1,7 @@
+"""
+uvicorn main:app --port 8011 --workers 1 --reload
+"""
+
 import os
 
 from fastapi import FastAPI, Request
